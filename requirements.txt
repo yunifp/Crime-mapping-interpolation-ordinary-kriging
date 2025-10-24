@@ -1,0 +1,11 @@
+pandas
+geopandas
+numpy
+matplotlib
+pykrige
+matplotlib-scalebar
+rasterio
+streamlit
+folium
+streamlit-folium
+branca
