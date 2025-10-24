@@ -1,2 +1,2 @@
-data/*
-!data/kejadian.csv
+# data/*
+# !data/kejadian.csv

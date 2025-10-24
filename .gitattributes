@@ -1,0 +1,4 @@
+data/peta_purbalingga/*.shp filter=lfs diff=lfs merge=lfs -text
+data/peta_purbalingga/*.shx filter=lfs diff=lfs merge=lfs -text
+data/peta_purbalingga/*.dbf filter=lfs diff=lfs merge=lfs -text
+output/peta_kerawanan_purbalingga.tif filter=lfs diff=lfs merge=lfs -text
