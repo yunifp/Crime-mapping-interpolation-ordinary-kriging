@@ -62,11 +62,6 @@ with st.sidebar:
     with st.expander(" LAYER PETA PREDIKSI", expanded=True):
         show_prediction = st.checkbox("Tampilkan Heatmap Kerawanan", True)
         opacity = st.slider("Transparansi Heatmap", 0.0, 1.0, 0.75, 0.05)
-        num_classes = st.select_slider(
-            "Jumlah Kelas/Band Legenda",
-            options=[3, 4, 5, 6, 7],
-            value=5 
-        )
 
     with st.expander(" LAYER DATA AKTUAL", expanded=True):
         show_actual = st.checkbox("Tampilkan Titik Kejadian", True)
@@ -99,34 +94,30 @@ folium.TileLayer('CartoDB positron', name='Minimalist').add_to(m)
 if show_prediction:
     min_val, max_val = np.nanmin(raster_data), np.nanmax(raster_data)
     
-    cmap_colors = ['#2b83ba', '#abdda4', '#ffffbf', '#fdae61', '#d7191c']
-    full_cmap = mcm.get_cmap('Spectral_r') 
-    
-    selected_colors = [colors.rgb2hex(full_cmap(i)) for i in np.linspace(0, 1, num_classes)]
-    
-    cmap = mcm.get_cmap(colors.ListedColormap(selected_colors))
+    continuous_cmap = mcm.get_cmap('Spectral_r')
     norm = colors.Normalize(vmin=min_val, vmax=max_val)
-    colored_raster = cmap(norm(raster_data))
-    colored_raster[raster_data.mask] = [0, 0, 0, 0]
+    
+    colored_raster = continuous_cmap(norm(raster_data))
+    
+    colored_raster[raster_data.mask] = [0, 0, 0, 0] 
+    
     colored_raster_uint8 = (colored_raster * 255).astype(np.uint8)
     
     ImageOverlay(
         image=colored_raster_uint8,
         bounds=raster_bounds,
         opacity=opacity,
-        name='Prediksi Kerawanan',
+        name='Prediksi Kerawanan (Gradasi)',
     ).add_to(m)
-    steps = np.linspace(min_val, max_val, num=num_classes + 1)
 
-    legend_colormap = cm.StepColormap(
-        colors=selected_colors, 
-        index=steps,            
-        vmin=min_val, 
-        vmax=max_val,
-        caption=f"Level Kerawanan Kriminalitas ({num_classes} Kelas)"
-    )
+    legend_colors = [colors.rgb2hex(continuous_cmap(i)) for i in np.linspace(0, 1, 100)]
     
-
+    legend_colormap = cm.LinearColormap(
+        colors=legend_colors,
+        vmin=min_val,
+        vmax=max_val,
+        caption="Level Kerawanan Kriminalitas (Gradasi)"
+    )
     m.add_child(legend_colormap)
     
 
